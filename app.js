@@ -20,7 +20,7 @@ weatherApp.config(function ($routeProvider) {
 
 // Services
 weatherApp.service('cityService', function() {
-    this.city = "New York, NY";
+    this.city = "Salt Lake City, UT";
 });
 
 // Controllers
