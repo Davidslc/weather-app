@@ -3,38 +3,52 @@ var weatherApp = angular.module('weatherApp', ['ngRoute', 'ngResource']);
 
 // Routes
 weatherApp.config(function ($routeProvider) {
+
     $routeProvider
-    .when('/', {
+
+        .when('/', {
         templateUrl: 'pages/home.htm',
         controller: 'homeController'
     })
-    .when('/forecast', {
+
+        .when('/forecast', {
         templateUrl: 'pages/forecast.htm',
         controller: 'forecastController'
     })
-    .when('/forecast/:days', {
+
+        .when('/forecast/:days', {
         templateUrl: 'pages/forecast.htm',
         controller: 'forecastController'
     })
+
 });
 
 // Services
 weatherApp.service('cityService', function() {
+
     this.city = "Salt Lake City, UT";
+
 });
 
 // Controllers
 weatherApp.controller('homeController', ['$scope', 'cityService', function($scope, cityService) {
+
     $scope.city = cityService.city;
+    
     $scope.$watch('city', function() {
         cityService.city = $scope.city;
     });
+
 }]);
 
 weatherApp.controller('forecastController', ['$scope', '$resource', '$routeParams', 'cityService', function($scope, $resource, $routeParams, cityService) {
+    
     $scope.city = cityService.city;
+    
     $scope.days = $routeParams.days || '2';
+    
     $scope.weatherAPI = $resource("http://api.openweathermap.org/data/2.5/forecast/daily", {callback: "JSON_CALLBACK" }, { get: { method: "JSONP" }});
+    
     $scope.weatherResult = $scope.weatherAPI.get({ q: $scope.city, cnt: $scope.days });
     
     $scope.convertToFahrenheit = function(degk) {
@@ -44,6 +58,7 @@ weatherApp.controller('forecastController', ['$scope', '$resource', '$routeParam
     $scope.convertToDate = function(dt) {
         return new Date(dt * 1000);
     }
+
 }]);
 
 // Directives
@@ -51,7 +66,12 @@ weatherApp.directive('dateTemp', function() {
     return {
         restrict: 'E',
         templateUrl: 'directives/datetemp.htm',
-        replace: true
-        
+        replace: true,
+        scope: {
+            weatherDay: "=",
+            convertToStandard: "&",
+            convertToDate: "&",
+            dateFormat: "@"
+        }
     }
 });
